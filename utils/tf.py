@@ -1,4 +1,5 @@
 import tensorflow as tf
+import math
 from tensorflow.python.framework import ops
 
 class batch_norm(object):
@@ -37,6 +38,43 @@ def conv2d(input_, output_dim,
         conv = tf.nn.conv2d(input_, w,
                             strides=[1, d_h, d_w, 1], padding='SAME')
         return conv
+
+def euclidean_loss(input1, input2):
+    return tf.reduce_mean(tf.sqrt(tf.reduce_sum(
+                          tf.pow(tf.sub(
+                          input1, input2), 2), 0)))
+
+
+def convolutional_encoder(input_im, input_res,
+                          output_res, channel_dims, prefix):
+    layer = input_im
+    num_layers = int(math.log(input_res/output_res, 2))
+    for i in range(0, num_layers):
+        filter_size = 5
+        if i > 2:
+            filter_size = 3
+        layer_name = prefix + "_e" + str(i)
+        layer = lrelu(
+            conv2d(layer, channel_dims[i],
+                   filter_size, filter_size, 2, 2, 0.02, layer_name))
+    return layer
+
+
+def convolutional_decoder(input_im, input_res,
+                          output_res, channel_dims, prefix, batch_size):
+    layer = input_im
+    num_layers = int(math.log(output_res/input_res, 2))
+    for i in range(0, num_layers):
+        filter_size = 5
+        if i <= 2:
+            filter_size = 3
+        layer_name = prefix + "_d" + str(num_layers - i - 1)
+        layer = lrelu(
+            deconv2d(layer, [batch_size,
+                     int(input_res * math.pow(2, i+1)),
+                     int(input_res * math.pow(2, i+1)), channel_dims[i]],
+                     filter_size, filter_size, 2, 2, 0.02, layer_name))
+    return layer
 
 
 def linear(input_, output_size, scope=None, stddev=0.02):
