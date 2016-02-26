@@ -53,10 +53,10 @@ def main(argv=None):
         #scipy.misc.toimage(im1[0], cmin=0, cmax=255).save("output1.png")
 
         # fixed lighting in the second image, roughly symmetric to the first one which is (-5,-5,-5)
-        light_pos2 = [10., 35, 45]
+        #light_pos2 = [10., 35, 45]
         
         # same lighting in the first and the second image
-        #light_pos2 = light_pos1
+        light_pos2 = light_pos1
         rad2 = random.random() * 0.6 + 1.7
         el2 = int(random.random() * 50 - 10)
         az2 = int(random.random() * 360)
