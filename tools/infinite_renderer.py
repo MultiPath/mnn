@@ -20,7 +20,7 @@ def main(argv=None):
             depth = True
 
 
-    with open("/home/tatarchm/dev/frameworks/mnn/tools/models.txt") as f:
+    with open("models.txt") as f:
         model_names = f.readlines()
 
     model_num = start
@@ -28,7 +28,7 @@ def main(argv=None):
     bg_num = 1
 
     while True:
-        command = "python /home/tatarchm/dev/frameworks/mnn/tools/rendering_client.py -s " + str(bg_num)
+        command = "python rendering_client.py -s " + str(bg_num)
         if background is True:
             command += " -b"
         if depth is True:

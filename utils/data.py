@@ -32,16 +32,16 @@ class SyncDataReceiver():
         RAD_SCALE = 10. # to make radius in smaller range befor feeding to the net
         image1 = np.fromstring(message[0:49152], dtype='uint8')
         image1 = image1.reshape(128, 128, 3)
-        image1 = (image1 / 255.0 - 0.5) * 2
+        image1 = (image1 / 255.0 - 0.5) * 1.5
 
         image2 = np.fromstring(message[49152:98304], dtype='uint8')
         image2 = image2.reshape(128, 128, 3)
-        image2 = (image2 / 255.0 - 0.5) * 2
+        image2 = (image2 / 255.0 - 0.5) * 1.5
 
         depth2 = np.fromstring(message[98304:131072], dtype='uint16')
         #depth2 = depth2.reshape(128, 128, 1)
         #scipy.misc.toimage(depth2, cmin=0, cmax=65535).save("depth2.png")
-        depth2 = (depth2 / 65535.0 - 0.5) * 2
+        depth2 = (depth2 / 65535.0 - 0.5) * 1.5
 
         tmp_label = np.fromstring(message[131072:131072 + 12*4], dtype='int32')
         rad1 = tmp_label[0] / 100. / RAD_SCALE

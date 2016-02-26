@@ -52,7 +52,11 @@ def main(argv=None):
         im1 = rend.renderView([rad1, el1, az1], light_pos1)
         #scipy.misc.toimage(im1[0], cmin=0, cmax=255).save("output1.png")
 
-        light_pos2 = light_pos1
+        # fixed lighting in the second image, roughly symmetric to the first one which is (-5,-5,-5)
+        light_pos2 = [10., 35, 45]
+        
+        # same lighting in the first and the second image
+        #light_pos2 = light_pos1
         rad2 = random.random() * 0.6 + 1.7
         el2 = int(random.random() * 50 - 10)
         az2 = int(random.random() * 360)
