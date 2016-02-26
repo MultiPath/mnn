@@ -3,6 +3,7 @@ import numpy as np
 import math
 import os
 import scipy.misc
+import time
 from mnn.utils.im import *
 
 MSGLEN = 128 * 128 * 3 + 128 * 128 * 3 + 128 * 128 * 2 + 12 * 4
@@ -15,17 +16,32 @@ class SyncDataReceiver():
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def connect(self, host, port):
+        self.host = host
+        self.port = port
         self.client_socket.connect((host, port))
+
+    def reconnect(self):
+        print("reconnecting...")
+        self.client_socket.close()
+        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client_socket.connect((self.host, self.port))
 
     def receiveMessage(self):
         chunks = []
         bytes_recd = 0
         while bytes_recd < MSGLEN:
+            #ready = select.select([self.client_socket], [], [], 10)
+            #if ready[0]:
             chunk = self.client_socket.recv(min(MSGLEN - bytes_recd, 2048))
-            if chunk == '':
-                raise RuntimeError("socket connection broken")
+            if chunk == b'':
+                print("socket error")
+                return None
             chunks.append(chunk)
             bytes_recd = bytes_recd + len(chunk)
+            #else:
+            #    print("server dead")
+            #    self.client_socket.close()
+            #    self.client_socket.connect((self.host, self.port))
         return b''.join(chunks)
 
     def decodeMessage(self, message):
