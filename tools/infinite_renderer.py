@@ -20,7 +20,7 @@ def main(argv=None):
             depth = True
 
 
-    with open("models.txt") as f:
+    with open("cars_training.txt") as f:
         model_names = f.readlines()
 
     model_num = start

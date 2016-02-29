@@ -129,18 +129,21 @@ def binary_cross_entropy_with_logits(logits, targets, name=None):
 
 def linear_msra(input_, output_size, scope=None, msra_coeff=1.):
     shape = input_.get_shape().as_list()
+    fan_in = int(input_.get_shape()[-1])
+    stddev = msra_coeff * math.sqrt(2. / float(fan_in))
 
     with tf.variable_scope(scope or "Linear"):
         matrix = tf.get_variable("Matrix", [shape[1], output_size], tf.float32,
                                  tf.random_normal_initializer(stddev=stddev))
-        return tf.matmul(input_, matrix)
+        b = tf.get_variable('b', [output_size,], initializer=tf.constant_initializer(value=0.))
+        return tf.matmul(input_, matrix) + b
 
                           
 def conv2d_msra(input_, output_dim,
            k_h=5, k_w=5, d_h=2, d_w=2, msra_coeff=1.,
            bias=True, name="conv2d"):
     with tf.variable_scope(name):
-        fan_in = k_h * k_w * input_.get_shape()[-1]
+        fan_in = k_h * k_w * int(input_.get_shape()[-1])
         stddev = msra_coeff * math.sqrt(2. / float(fan_in))
         w = tf.get_variable('w', [k_h, k_w, input_.get_shape()[-1],
                 output_dim],
@@ -160,8 +163,8 @@ def deconv2d_msra(input_, output_shape,
              k_h=5, k_w=5, d_h=2, d_w=2, msra_coeff=1.,
              name="deconv2d"):
     with tf.variable_scope(name):
-        fan_in = k_h * k_w * input_.get_shape()[-1]
-        stddev =  msra_coeff * math.sqrt(2. / float(fan_in) * float(dh) * float(dw)) # multiply by sqrt(dh*dw) because of bad-of-nails upsampling #TODO check
+        fan_in = k_h * k_w * int(input_.get_shape()[-1])
+        stddev =  msra_coeff * math.sqrt(2. / float(fan_in) * float(d_h) * float(d_w)) # multiply by sqrt(dh*dw) because of bad-of-nails upsampling #TODO check
         # filter : [height, width, output_channels, in_channels]
         w = tf.get_variable('w', [k_h, k_w, output_shape[-1],
                             input_.get_shape()[-1]],
