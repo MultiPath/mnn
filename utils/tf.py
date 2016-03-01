@@ -38,12 +38,9 @@ def conv2d(input_, output_dim,
         conv = tf.nn.conv2d(input_, w,
                             strides=[1, d_h, d_w, 1], padding='SAME')
         return conv
-
+                         
 def euclidean_loss(input1, input2):
-    return tf.reduce_mean(tf.sqrt(tf.reduce_sum(
-                          tf.pow(tf.sub(
-                          input1, input2), 2), 0)))
-
+    return tf.reduce_mean(tf.reduce_sum(tf.pow(tf.sub(input1, input2), 2), 3))
 
 def convolutional_encoder(input_im, input_res,
                           output_res, channel_dims, prefix):
